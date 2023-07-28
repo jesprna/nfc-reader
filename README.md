@@ -28,7 +28,7 @@ Binaries for Windows, MacOS and Linux platforms could be downloaded from release
 ## Build
 Install the source code and build
 ```golang
-go get github.com/taglme/nfcuid
+go get github.com/jesprna/nfc-reader
 go build
 ```
 
