@@ -1,0 +1,65 @@
+env:
+  - GO111MODULE=on
+dist: dist
+before:
+  hooks:
+    - go mod download
+builds:
+- id: nfcuid-darwin-amd64
+  env:
+  - CGO_ENABLED=1
+  - CC=o64-clang 
+  - CXX=o64-clang++
+  goos:
+    - darwin
+  goarch:
+    - amd64
+- id: nfcuid-windows-amd64
+  env:
+  - CGO_ENABLED=1
+  - CC=x86_64-w64-mingw32-gcc
+  - CXX=x86_64-w64-mingw32-g++
+  goos:
+    - windows
+  goarch:
+    - amd64
+- id: nfcuid-linux-amd64
+  env:
+  - CGO_ENABLED=1
+  goos:
+    - linux
+  goarch:
+    - amd64
+
+archives:    
+- id: default
+  builds:
+  - nfcuid-linux-amd64
+  - nfcuid-windows-amd64
+  - nfcuid-darwin-amd64
+  name_template: "{{ .ProjectName }}_{{ .Os }}_{{ .Version }}"
+  replacements:
+    darwin: darwin
+    linux: linux
+    windows: windows
+    386: i386
+    amd64: x86_64
+  format_overrides:
+    - goos: windows
+      format: zip
+release:
+  github:
+    owner: taglme
+    name: nfcuid
+  ids:
+    - default
+checksum:
+  name_template: 'checksums.txt'
+snapshot:
+  name_template: "{{ .Tag }}-next"
+changelog:
+  sort: asc
+  filters:
+    exclude:
+    - '^docs:'
+    - '^test:'

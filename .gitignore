@@ -1,0 +1,5 @@
+.vscode/
+nfcuid.exe
+build/
+vendor/
+.github/
