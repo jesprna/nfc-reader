@@ -3,3 +3,5 @@ nfcuid.exe
 build/
 vendor/
 .github/
+*.exe
+nfcuid.exe~
