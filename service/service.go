@@ -1,4 +1,4 @@
-package main
+package service
 
 import (
 	"bufio"
@@ -11,6 +11,7 @@ import (
 	"strings"
 
 	"github.com/ebfe/scard"
+	"github.com/jesprna/nfc-reader/char"
 	"github.com/taglme/string2keyboard"
 )
 
@@ -27,8 +28,8 @@ type Flags struct {
 	CapsLock bool
 	Reverse  bool
 	Decimal  bool
-	EndChar  CharFlag
-	InChar   CharFlag
+	EndChar  char.CharFlag
+	InChar   char.CharFlag
 	Device   int
 }
 
@@ -40,18 +41,18 @@ func (s *service) Start() {
 	//Establish a context
 	ctx, err := scard.EstablishContext()
 	if err != nil {
-		errorExit(err)
+		ErrorExit(err)
 	}
 	defer ctx.Release()
 
 	//List available readers
 	readers, err := ctx.ListReaders()
 	if err != nil {
-		errorExit(err)
+		ErrorExit(err)
 	}
 
 	if len(readers) < 1 {
-		errorExit(errors.New("Devices not found. Try to plug-in new device and restart"))
+		ErrorExit(errors.New("Devices not found. Try to plug-in new device and restart"))
 	}
 
 	fmt.Printf("Found %d device:\n", len(readers))
@@ -88,10 +89,10 @@ func (s *service) Start() {
 			break
 		}
 	} else if s.flags.Device < 0 {
-		errorExit(errors.New("Device flag should positive integer"))
+		ErrorExit(errors.New("Device flag should positive integer"))
 		return
 	} else if s.flags.Device > len(readers) {
-		errorExit(errors.New("Device flag should not exceed the number of available devices"))
+		ErrorExit(errors.New("Device flag should not exceed the number of available devices"))
 		return
 	}
 
@@ -103,15 +104,18 @@ func (s *service) Start() {
 		fmt.Println("Waiting for a Card")
 		index, err := waitUntilCardPresent(ctx, selectedReaders)
 		if err != nil {
-			errorExit(err)
+			ErrorExit(err)
 		}
 
 		//Connect to card
-		fmt.Println("Connecting to card...")
+		fmt.Println("Connecting to card...", ctx)
+
 		card, err := ctx.Connect(selectedReaders[index], scard.ShareShared, scard.ProtocolAny)
 		if err != nil {
-			errorExit(err)
+			fmt.Println("Connecting to card...")
+			ErrorExit(err)
 		}
+
 		defer card.Disconnect(scard.ResetCard)
 
 		//GET DATA command
@@ -119,7 +123,7 @@ func (s *service) Start() {
 
 		rsp, err := card.Transmit(cmd)
 		if err != nil {
-			errorExit(err)
+			ErrorExit(err)
 		}
 
 		if len(rsp) < 2 {
@@ -162,7 +166,7 @@ func (s *service) Flags() Flags {
 	return s.flags
 }
 
-func errorExit(err error) {
+func ErrorExit(err error) {
 	fmt.Println(err)
 	os.Exit(1)
 }

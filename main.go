@@ -3,15 +3,18 @@ package main
 import (
 	"errors"
 	"flag"
+
+	"github.com/jesprna/nfc-reader/char"
+	"github.com/jesprna/nfc-reader/service"
 )
 
 func main() {
-	var appFlags Flags
+	var appFlags service.Flags
 	var endChar, inChar string
 	var ok bool
 	//Read application flags
-	flag.StringVar(&endChar, "end-char", "none", "Character at the end of UID. Options: "+CharFlagOptions())
-	flag.StringVar(&inChar, "in-char", "none", "Сharacter between bytes of UID. Options: "+CharFlagOptions())
+	flag.StringVar(&endChar, "end-char", "none", "Character at the end of UID. Options: "+char.CharFlagOptions())
+	flag.StringVar(&inChar, "in-char", "none", "Сharacter between bytes of UID. Options: "+char.CharFlagOptions())
 	flag.BoolVar(&appFlags.CapsLock, "caps-lock", false, "UID with Caps Lock")
 	flag.BoolVar(&appFlags.Reverse, "reverse", false, "UID reverse order")
 	flag.BoolVar(&appFlags.Decimal, "decimal", false, "UID in decimal format")
@@ -19,18 +22,18 @@ func main() {
 	flag.Parse()
 
 	//Check flags
-	appFlags.EndChar, ok = StringToCharFlag(endChar)
+	appFlags.EndChar, ok = char.StringToCharFlag(endChar)
 	if !ok {
-		errorExit(errors.New("Unknown end character flag. Run with '-h' flag to check options"))
+		service.ErrorExit(errors.New("Unknown end character flag. Run with '-h' flag to check options"))
 		return
 	}
-	appFlags.InChar, ok = StringToCharFlag(inChar)
+	appFlags.InChar, ok = char.StringToCharFlag(inChar)
 	if !ok {
-		errorExit(errors.New("Unknown in character flag. Run with '-h' flag to check options"))
+		service.ErrorExit(errors.New("Unknown in character flag. Run with '-h' flag to check options"))
 		return
 	}
 
-	service := NewService(appFlags)
+	service := service.NewService(appFlags)
 	service.Start()
 
 }

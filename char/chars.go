@@ -1,4 +1,4 @@
-package main
+package char
 
 type CharFlag int
 
@@ -19,14 +19,14 @@ type CharFlagDef struct {
 }
 
 var charFlagStrings = map[CharFlag]CharFlagDef{
-	CharFlagNone:      CharFlagDef{"none", ""},
-	CharFlagSpace:     CharFlagDef{"space", " "},
-	CharFlagTab:       CharFlagDef{"tab", "\\t"},
-	CharFlagHyphen:    CharFlagDef{"hyphen", "-"},
-	CharFlagEnter:     CharFlagDef{"enter", "\\n"},
-	CharFlagSemiColon: CharFlagDef{"semicolon", ";"},
-	CharFlagColon:     CharFlagDef{"colon", ":"},
-	CharFlagComma:     CharFlagDef{"comma", ","},
+	CharFlagNone:      {"none", ""},
+	CharFlagSpace:     {"space", " "},
+	CharFlagTab:       {"tab", "\\t"},
+	CharFlagHyphen:    {"hyphen", "-"},
+	CharFlagEnter:     {"enter", "\\n"},
+	CharFlagSemiColon: {"semicolon", ";"},
+	CharFlagColon:     {"colon", ":"},
+	CharFlagComma:     {"comma", ","},
 }
 
 func StringToCharFlag(s string) (CharFlag, bool) {
